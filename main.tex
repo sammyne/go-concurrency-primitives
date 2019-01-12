@@ -1,0 +1,190 @@
+%!TEX program=xelatex
+\documentclass{beamer}
+\usetheme{focus}
+% Full instructions available at:
+% https://github.com/elauksap/focus-beamertheme
+
+\usepackage{ctex}
+
+\usepackage{listings}
+\usepackage{golang}
+\usepackage{xcolor}
+
+\title{Go并发元件}
+%\subtitle{Subtitle}
+\author{黎相敏}
+\titlegraphic{\includegraphics[scale=1.25]{focuslogo.pdf}}
+\institute{上海观源信息科技有限公司 \\ 上海市闵行区紫竹科技园4号楼303B}
+\date{12/01/2019}
+
+\lstset{ % add your own preferences
+    frame=trBL, %single,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red},
+    numbers=left,
+    numbersep=8pt,
+    showstringspaces=false, 
+    stringstyle=\color{blue},
+    tabsize=2,
+    language=golang % this is it !
+}
+\renewcommand{\lstlistingname}{代码片段}% Listing -> 代码片段
+
+% command macros to save typing
+\newcommand{\WaitGroup}{\texttt{WaitGroup}}
+\newcommand{\Mutex}{\texttt{Mutex}}
+\newcommand{\RWMutex}{\texttt{RWMutex}}
+\newcommand{\Cond}{\texttt{Cond}}
+\newcommand{\Once}{\texttt{Once}}
+\newcommand{\Pool}{\texttt{Pool}}
+
+\begin{document}
+
+    \begin{frame}
+        \maketitle
+    \end{frame}
+
+    \begin{frame}{大纲}
+        \tableofcontents
+    \end{frame}
+
+    %\include{sections/fork-join}
+
+    \section{sync包}
+\begin{frame}{基本元件}
+   \texttt{sync}包维护着用于同步底层内存访问的元件，包括
+   \begin{itemize}
+       \item \WaitGroup
+       \item \Mutex 和 \RWMutex
+       \item \Cond
+       \item \Once
+       \item \Pool
+   \end{itemize} 
+\end{frame}
+
+    %\include{sections/sync-pkg/wait-group}
+    %\include{sections/sync-pkg/mutex}
+
+    \iffalse
+    \section{Section 1}
+    \begin{frame}{Simple frame}
+        This is a simple frame.
+    \end{frame}
+
+    \begin{frame}[plain]{Plain frame}
+        This is a frame with plain style and it is numbered.
+    \end{frame}
+    
+    \begin{frame}[t]
+        This frame has an empty title and is aligned to top.
+    \end{frame}
+    
+    \begin{frame}[noframenumbering]{No frame numbering}
+        This frame is not numbered and is citing reference \cite{knuth74}.
+    \end{frame}
+    
+    \begin{frame}{Typesetting and Math}
+        The packages \texttt{inputenc} and \texttt{FiraSans}\footnote{\url{https://fonts.google.com/specimen/Fira+Sans}}\textsuperscript{,}\footnote{\url{http://mozilla.github.io/Fira/}} are used to properly set the main fonts.
+        \vfill
+        This theme provides styling commands to typeset \emph{emphasized}, \alert{alerted}, \textbf{bold}, \textcolor{example}{example text}, \dots
+        \vfill
+        \texttt{FiraSans} also provides support for mathematical symbols:
+        \begin{equation*}
+            e^{i\pi} + 1 = 0.
+        \end{equation*}
+    \end{frame}
+
+    \section{Section 2}
+    \begin{frame}{Blocks}
+        \begin{block}{Block}
+            Text.
+        \end{block}
+        \pause
+        \begin{alertblock}{Alert block}
+            Alert \alert{text}.
+        \end{alertblock}
+        \pause
+        \begin{exampleblock}{Example block}
+            Example \textcolor{example}{text}.
+        \end{exampleblock}
+    \end{frame}
+    
+    \begin{frame}{Lists}
+        \begin{columns}[t, onlytextwidth]
+            \column{0.33\textwidth}
+                Items:
+                \begin{itemize}
+                    \item Item 1
+                    \begin{itemize}
+                        \item Subitem 1.1
+                        \item Subitem 1.2
+                    \end{itemize}
+                    \item Item 2
+                    \item Item 3
+                \end{itemize}
+            
+            \column{0.33\textwidth}
+                Enumerations:
+                \begin{enumerate}
+                    \item First
+                    \item Second
+                    \begin{enumerate}
+                        \item Sub-first
+                        \item Sub-second
+                    \end{enumerate}
+                    \item Third
+                \end{enumerate}
+            
+            \column{0.33\textwidth}
+                Descriptions:
+                \begin{description}
+                    \item[First] Yes.
+                    \item[Second] No.
+                \end{description}
+        \end{columns}
+    \end{frame}
+\setbeamertemplate{caption}[numbered]
+    \begin{frame}{Figures and Tables}
+        \begin{columns}
+            \column{0.4\textwidth}
+                \begin{figure}
+                    \centering
+                    \includegraphics{focuslogo.pdf}
+                    \caption{Figure caption.}
+                    \label{fig:focuslogo}
+                \end{figure}
+                
+            \column{0.6\textwidth}
+                \begin{table}
+                    \centering
+                    \begin{tabular}{rcc}
+                         & Heading 1 & Heading 2 \\\hline
+                        Row 1 & \(v_{11}\) & \(v_{12}\) \\
+                        Row 2 & \(v_{21}\) & \(v_{22}\) \\
+                        Row 3 & \(v_{31}\) & \(v_{32}\) \\
+                    \end{tabular}
+                    \caption{Table caption.}
+                    \label{tab:demo}
+                \end{table}
+        \end{columns}
+    \end{frame}
+    
+    \begin{frame}[focus]
+        Thanks for using \textbf{Focus}!
+    \end{frame}
+    
+    \appendix
+    \begin{frame}{References}
+        \nocite{*}
+        \bibliography{demo_bibliography}
+        \bibliographystyle{plain}
+    \end{frame}
+    
+    \begin{frame}{Backup frame}
+        \usebeamercolor[fg]{normal text}
+        This is a backup frame, useful to include additional material for questions from the audience.
+        \vfill
+        The package \texttt{appendixnumberbeamer} is used not to number appendix frames.
+    \end{frame}
+    \fi
+\end{document}
