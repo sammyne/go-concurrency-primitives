@@ -1,0 +1,70 @@
+\subsection{池\Pool }
+\begin{frame}{池\Pool }
+    \begin{itemize}
+        \item \text{用途}: 池模式创建并导出特定数目或一批资源以被第三方使用
+        \item 3个基本方法
+            \begin{description}
+                \item[New] 创建资源实例
+                \item[Get] 调用时，如果池有可用的实例，则将其直接返回给请求方，否则调用New方法实时创建一个然后将其返回给请求方
+                \item[Put] 将服务完毕的实例放回池缓存以被其他进程使用
+            \end{description}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{实例}
+    利用池创建对象，\alert{使用完毕后重新放回池中}，从而节省对象的创建
+\begin{lstlisting}
+myPool := &sync.Pool{
+  New: func() interface{} {
+    fmt.Println("Creating new instance.")
+    return struct{}{}
+  },
+}
+myPool.Get()
+instance := myPool.Get()
+myPool.Put(instance)
+myPool.Get()
+
+// 输出:
+// Creating new instance.
+// Creating new instance.
+\end{lstlisting}
+
+另一个例子是\href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/pool/basic2.go}{使用池缓存资源以节省内存空间}
+
+\end{frame}
+
+\begin{frame}{更多使用场景}
+    预存一批能够快速响应(初始化比较漫长)的服务提供方，相关代码参见
+    \begin{itemize}
+        \item \href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/pool/slow_network_service_benchmark_test.go}{没有使用池预存对象的方式}
+        \item \href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/pool/slow_network_service_benchmark_test.go}{使用池预存对象的方式}
+    \end{itemize}
+
+    对比结果是：使用缓存池的方式快了近 1000 倍
+\end{frame}
+
+\begin{frame}{注意事项}
+\begin{exampleblock}{适用条件}
+    \begin{itemize}
+        \item 为并发的进程提供服务对象，这些对象需要满足
+            \begin{itemize}
+                \item 在初始化后很快就被抛弃
+                \item 或创建会对内存影响不小
+            \end{itemize}
+    \end{itemize}
+\end{exampleblock}    
+
+\begin{alertblock}{不适用条件}
+   所需服务对象不是同态的---部分时间会被浪费在对象的类型转换上 
+\end{alertblock}
+\end{frame}
+
+\begin{frame}{\Pool 小结}
+    \begin{itemize}
+        \item 初始化\Pool 时，创建一个\texttt{New}成员
+        \item 不要对\texttt{Get()}返回的对象状态做任何前提假设
+        \item 不要忘记利用\texttt{Put()}将服务对象再次缓存以重用
+        \item 池中对象应基本同态，即类型相同    
+    \end{itemize}
+\end{frame}

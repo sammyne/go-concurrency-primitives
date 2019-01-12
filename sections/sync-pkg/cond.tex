@@ -1,0 +1,55 @@
+\subsection{条件信号量\Cond}
+\begin{frame}{基本介绍}
+    \begin{itemize}
+        \item \textbf{用途}: 协程用于等待或通知特定事件发生的中心
+        \item 这里的事件只是在两个或更多协程之间传递事件发生的事实本身，\alert{无法承载其他信息}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{使用场景}
+   没有借助条件信号量实现事件通知的两种方式
+   
+   \begin{enumerate}
+       \item \texttt{for}循环等到为止: 无限占用 CPU 内核，\alert{无法被调度}
+\begin{lstlisting}
+for conditionTrue() == false { }    
+\end{lstlisting}
+       \item 利用主动睡眠提供可被抢占机会: \alert{效率不高}，而且难以准确设置睡眠的时长：太长降低性能，太短消耗太多 CPU 时间    
+\begin{lstlisting}
+for conditionTrue() == false {
+  time. Sleep(1*time.Millisecond)
+}
+\end{lstlisting}
+   \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{使用场景}
+   借助\Cond 实现更优的事件通知
+\begin{lstlisting}
+c := sync.NewCond(&sync.Mutex{})
+
+c.L.Lock()
+for conditionTrue() == false {
+  c.Wait()
+}
+c.L.Unlock()
+\end{lstlisting}
+
+\begin{itemize}
+    \item \texttt{Wait()}促使协程进入阻塞状态，挂起当前协程，为其他协程腾出在系统级线程执行的机会
+    \item \texttt{Wait()}内部执行过程会先调用所绑定锁的\texttt{Unlock()}，而在收到需要的信号后退出执行前再次执行\texttt{Lock()}重新获得对锁的控制权
+\end{itemize}
+
+另一个例子是\href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/cond/queue.go}{玩具级的限定容量队列}
+\end{frame}
+
+\begin{frame}{两种通知方式: \texttt{Signal}和\texttt{Broadcast}}
+   \begin{itemize}
+       \item Go 运行时维护着等待信号的协程队列(先进先出)
+       \item \texttt{Signal()}调用后，Go 运行时只会通知等待最久的那个协程并将其出列
+       \item \texttt{Broadcast()}的调用则会(逐一?并发?)通知所有等待的协程
+       \item \Cond 的性能要比\channel 的高
+   \end{itemize} 
+
+   某些需求场景下，基于\Cond 的实现会比基于通道\channel 简洁很多。例如，\href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/cond/boardcast.go}{按钮点击事件通知}
+\end{frame}

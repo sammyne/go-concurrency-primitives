@@ -31,12 +31,13 @@
 \renewcommand{\lstlistingname}{代码片段}% Listing -> 代码片段
 
 % command macros to save typing
-\newcommand{\WaitGroup}{\texttt{WaitGroup}}
-\newcommand{\Mutex}{\texttt{Mutex}}
-\newcommand{\RWMutex}{\texttt{RWMutex}}
+\newcommand{\channel}{\texttt{channel}}
 \newcommand{\Cond}{\texttt{Cond}}
+\newcommand{\Mutex}{\texttt{Mutex}}
 \newcommand{\Once}{\texttt{Once}}
 \newcommand{\Pool}{\texttt{Pool}}
+\newcommand{\RWMutex}{\texttt{RWMutex}}
+\newcommand{\WaitGroup}{\texttt{WaitGroup}}
 
 \begin{document}
 
@@ -64,6 +65,9 @@
 
     %\include{sections/sync-pkg/wait-group}
     %\include{sections/sync-pkg/mutex}
+    %\include{sections/sync-pkg/cond}
+    %\include{sections/sync-pkg/once}
+    %\include{sections/sync-pkg/pool}
 
     \iffalse
     \section{Section 1}
