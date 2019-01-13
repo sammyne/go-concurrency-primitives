@@ -1,10 +1,10 @@
-\section{并发模型}
+\section{基本术语}
 \begin{frame}{分叉--汇合(Fork-Join)模型}
   \begin{columns}
       \column{.5\textwidth}
         \begin{itemize}
           \item 程序执行过程中，\alert{父线程}可以分叉出与其并发执行的\alert{子线程}
-          \item \alert{汇聚点}: 子线程从独立执行到汇合回父线程的时间点
+          \item \alert{汇合点}: 子线程从独立执行到汇合回父线程的时间点
         \end{itemize}
 
       \column{.5\textwidth}
@@ -15,8 +15,8 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{错误设置的汇聚点}
-\begin{lstlisting}[caption={不正确的汇聚点引发竞态},label={wrong-join}]
+\begin{frame}[fragile]{错误设置的汇合点}
+\begin{lstlisting}[caption={不正确的汇合点引发竞态},label={wrong-join}]
 sayHello := func() {
   fmt.Println("hello")
 }
@@ -24,14 +24,14 @@ go sayHello()
 // continue doing other things
 \end{lstlisting}
 
-    \alert{以上程序的输出结果是不确定的}。因为协程由 Go 的运行时创建和调度，\texttt{sayHello}协程没能通过合适的汇聚点和主协程进行汇合，因此，如果被调度之前主协程已退出，\texttt{sayHello}就无法获得执行的机会
+    \alert{以上程序的输出结果是不确定的}。因为协程由 Go 运行时创建和调度，\code{sayHello}协程没能通过合适的汇合点和主协程进行汇合。因此，如果被调度之前主协程已退出，\code{sayHello}就无法获得执行的机会
 
     \begin{exampleblock}{温馨提示}
-        \textbf{正确设置的汇聚点}能确保程序正确性并消除潜在的\alert{竞态} 
+        \textbf{正确设置的汇点}能确保程序正确性并消除潜在的\alert{竞态} 
     \end{exampleblock}
 \end{frame}
 
-\begin{frame}[fragile]{纠正的汇聚点}
+\begin{frame}[fragile]{纠正的汇合点}
 为上述程序设置正确的汇合点，\texttt{sayHello}必须和主协程\textbf{同步}，使自己能在主协程退出之前与其汇合，解决方案之一如\lstlistingname~\ref{lst-ok-join}
 
 \begin{lstlisting}[caption={利用同步确保\texttt{sayHello}在主协程退出之前与其汇合},label=lst-ok-join]
@@ -42,13 +42,13 @@ sayHello := func() {
 }
 wg.Add(1)
 go sayHello()
-wg.Wait()  // 汇聚点
+wg.Wait()  // 汇合点
 
 // 输出:
 // hello    
 \end{lstlisting}
 
-\alert{可见，分叉--汇合模型下并发编程的正确性依赖于数据同步}
+\alert{可见，分叉---汇合模型下并发编程的正确性依赖于数据同步}
 \end{frame}
 
 \begin{frame}{数据同步方式}

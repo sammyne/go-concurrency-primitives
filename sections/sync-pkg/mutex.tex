@@ -1,14 +1,24 @@
-\subsection{\Mutex 和\RWMutex }
+\subsection{通用锁\Mutex 和读写锁\RWMutex }
 \begin{frame}{基本介绍}
     \begin{itemize}
         \item \Mutex 是``Mutual Exclusion''的缩写
         \item \textbf{用途}: 保护程序的\alert{关键区域}---需要排他地存取共享资源的程序片段
         \item \Mutex 和\RWMutex 要求开发者必须以\alert{特定的方式}访问内存以保证数据的同步
     \end{itemize}
+
+    \href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/mutex/basic.go}{一个利用锁保证计数器安全读写的例子}
+
+    \begin{exampleblock}{温馨提示}
+        \begin{itemize}
+            \item 锁\code{m}的\code{Lock()}调用之后应有配对的\code{defer m.UnLock()}语句
+            \item \alert{进出关键区域的代价是昂贵的}
+        \end{itemize}    
+    \end{exampleblock}
 \end{frame}
 
+\iffalse
 \begin{frame}[fragile]{示例}
-\begin{lstlisting}[caption={\Mutex 使用示例}]
+\begin{lstlisting}
 var count int
 var lock sync.Mutex
 
@@ -24,13 +34,6 @@ decrement := func() {
   count--
   fmt.Printf("Decrementing: %d\n", count)
 }
-\end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]{示例(续)}
-    \begin{columns}[t]
-        \begin{column}{0.5\textwidth}
-\begin{lstlisting}[caption={\Mutex 使用示例(续)},firstnumber=last,xleftmargin=8pt]
 // Increment
 var arithmetic sync.WaitGroup
 for i := 0; i <= 2; i++ {
@@ -40,6 +43,13 @@ for i := 0; i <= 2; i++ {
     increment()
   }()
 }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{示例(续)}
+    \begin{columns}[t]
+        \begin{column}{0.5\textwidth}
+\begin{lstlisting}[caption={\Mutex 使用示例(续)},firstnumber=last,xleftmargin=8pt]
 // Decrement
 for i := 0; i <= 2; i++ {
   arithmetic.Add(1)
@@ -74,17 +84,21 @@ fmt.Println("Arithmetic complete.")
         \item \alert{进出关键区域的代价是昂贵的}
     \end{itemize}    
 \end{frame}
+\fi
 
 \begin{frame}{读写锁\RWMutex }
     \alert{在写锁未被锁定之前}，读写锁能够满足任意共存的读锁请求
 
-    示例代码参见\href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/mutex/rwlock.go}{\Mutex 和\RWMutex 性能对比}，具体结果如下图所示，\alert{可见,性能替身没有想象中的那么明显}
+    \bigskip
+    示例代码参见\href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/mutex/rwlock.go}{\Mutex 和\RWMutex 性能对比}，具体结果如下图所示，
 
     \begin{figure}
         \centering
         \includegraphics[width=0.7\textwidth]{images/rwmutex-vs-mutex.png}
         \caption{\Mutex 和\RWMutex 性能对比结果}
     \end{figure}
+    
+    \alert{可见,性能提升没有想象的那么明显}
 \end{frame}
 
 \iffalse

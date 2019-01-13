@@ -5,7 +5,7 @@
         \item 3个基本方法
             \begin{description}
                 \item[New] 创建资源实例
-                \item[Get] 调用时，如果池有可用的实例，则将其直接返回给请求方，否则调用New方法实时创建一个然后将其返回给请求方
+                \item[Get] 调用时，如果池有可用的实例，则将其直接返回给请求方，否则调用New方法实时创建一个，然后将其返回给请求方
                 \item[Put] 将服务完毕的实例放回池缓存以被其他进程使用
             \end{description}
     \end{itemize}

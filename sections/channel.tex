@@ -5,8 +5,8 @@
         \item 通道在声明时指定其数据流向
             \begin{itemize}
                 \item \alert{读写}\quad 默认，例如，\code{xStream := make(chan int)}
-                \item \alert{只读}\quad 将<-箭头放在\code{chan}关键字的左边，例如，\code{yStream := make(<-chan int)}
-                \item \alert{只写}\quad 将<-箭头放在\code{chan}关键字的右边，例如，\code{zStream := make(chan<- int)}
+                \item \alert{只读}\quad 将\code{<-}箭头放在\code{chan}关键字的左边，例如，\code{yStream := make(<-chan int)}
+                \item \alert{只写}\quad 将\code{<-}箭头放在\code{chan}关键字的右边，例如，\code{zStream := make(chan<- int)}
             \end{itemize}
     \end{itemize}
 
@@ -59,7 +59,7 @@ writeStream := make(chan<- interface{})
 \begin{frame}{阻塞性}
     \begin{itemize}
         \item 任何尝试向容量已满的通道发送数据的协程会等待直至通道有剩余空间
-        \item 任何尝试向空通道读数据的协程都会等待直至有一个值进入通道
+        \item 任何尝试从空通道读数据的协程都会等待直至有一个值进入通道
     \end{itemize}
 \end{frame}
 
@@ -69,8 +69,8 @@ writeStream := make(chan<- interface{})
         \item 返回一个值\code{x}和一个布尔值\code{closed}
             \begin{itemize}
                 \item \code{x}表示从通道传输下来的数据
-                \item \code{closed=false}表示\code{x}是由于通道已关闭其容量为空而返回的所声明类型的默认值
-                \item \code{closed=false}则表示\code{x}是从别处写入通道的值
+                \item \code{closed=false}表示\code{x}是由于通道已关闭且容量为空而返回的所声明类型的默认值
+                \item \code{closed=true}则表示\code{x}是从别处写入通道的值
             \end{itemize}
     \end{itemize}
 
@@ -142,6 +142,7 @@ wg.Wait()
 
 \begin{frame}{容量}
     \begin{itemize}
+        \item 通道的容量是指通道能够容纳的数据个数的最大值
         \item 通道根据容量可划分为 2 种类型：\alert{非缓存型}和\alert{缓存型}
         \item 非缓存型: 声明时不指定容量或指定容量为 0
         \item 缓存型: 通道在初始化时被赋予大于 0 的容量
@@ -152,9 +153,9 @@ wg.Wait()
                 \item 这类通道容易\alert{导致过早优化问题}和\alert{隐藏死锁问题}
             \end{itemize}
     \end{itemize}
-    通道的满和空都是相对与通道的容量而言的 
+    通道的\alert{满}和\alert{空}都是相对与通道的容量而言的 
 
-
+    \bigskip
     在预知通道需要支持的并发写操作次数\code{n}时，容量大小为\code{n}的缓存型通道可以使得写操作尽可能快地执行，例如，\href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/channels/buffered_channel.go}{缓存型通道作为消息队列}
 \end{frame}
 
@@ -177,22 +178,43 @@ fatal error: all goroutines are asleep - deadlock!
 \end{frame}
 
 \begin{frame}{对通道不同操作的后果}
-
-\begin{figure}
-    \includegraphics[width=0.5\textwidth]{images/channel-operations.png}
-    \caption{对通道不同操作的后果}
-\end{figure}
-
-    由表可知，
-\begin{itemize}
-    \item 阻塞协程的操作有 3 种
-    \item 导致协程恐慌的操作有 3 种
-\end{itemize}
+    % TODO: color the blocking and panicking
+    \begin{table}
+        \centering
+        \small
+        \begin{tabular}{llp{7cm}}
+            \hline
+            操作 &通道状态 & 后果 \\
+            \hline
+            \multirow{5}{*}{读} 
+              &\code{nil} & 阻塞 \\
+              &未关闭且非空 & 值 \\
+              &为关闭且空 & 阻塞 \\
+              &已关闭 & 默认值，\code{false} \\
+              &只写 & 编译错误 \\
+            \hline
+            \multirow{5}{*}{写} 
+              &\code{nil} & 阻塞 \\
+              &未关闭且满 &  阻塞\\
+              &为关闭且非满 & 写入给定值\\
+              &已关闭 & 恐慌 \\
+              &只读 & 编译错误 \\
+            \hline
+            \multirow{5}{*}{关闭} 
+              &\code{nil} & 恐慌 \\
+              &未关闭且非空 & 关闭通道；读操作能不断满足直至通道清空，之后返回默认值 \\
+              &未关闭且空 & 关闭通道；读操作获取默认值 \\
+              &已关闭 & 恐慌 \\
+              &只读 & 编译错误 \\
+            \hline
+        \end{tabular}
+    \end{table} 
 \end{frame}
 
 \begin{frame}{上下文}
-    通道的正确使用需要有合理的上下文环境，而为通道赋予正确的所有权协助创造这种环境
+    通道的正确使用需要有合理的上下文环境，而这个上下文环境依赖于为通道赋予正确的所有权
 
+    \bigskip
     \alert{通道的所有权应该属于负责初始化、写入数据和关闭通道的协程}
     
     通过这种规则限定
@@ -213,14 +235,12 @@ fatal error: all goroutines are asleep - deadlock!
 \end{frame}
 
 \begin{frame}[fragile]{基于通道实现的所有者---消费者样例}
-    \begin{columns}[t]
-        \column{0.65\textwidth}
 \begin{lstlisting}[xleftmargin=8pt]
 chanOwner := func() <-chan int {
-    resultStream := make(chan int, 5)
+    resultStream := make(chan int, 3)
     go func() {
         defer close(resultStream)
-        for i := 0; i <= 5; i++ {
+        for i := 0; i < 3; i++ {
         resultStream <- i
         }
     }()
@@ -233,17 +253,10 @@ for result := range resultStream {
 }
 fmt.Println("Done!")
 
-\end{lstlisting}
-        \column{0.3\textwidth}
-\begin{lstlisting}[firstnumber=last,xleftmargin=8pt]
 // 输出:
 // Received: 0
 // Received: 1
 // Received: 2
-// Received: 3
-// Received: 4
-// Received: 5
 // Done!    
 \end{lstlisting}
-    \end{columns}
 \end{frame}

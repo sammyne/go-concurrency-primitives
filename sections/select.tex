@@ -28,18 +28,18 @@ case <-time.After(1 * time.Second):
     \begin{itemize}
         \item 不同于\code{switch}语句，对于\select 语句
             \begin{itemize}
-                \item \code{case}子句不会线性地从上往下执行
-                \item 在没有任何满足条件的\code{case}子块时会一直阻塞
+                \item \code{case}子句不会线性地从上往下检查
+                \item 在没有任何满足条件的\code{case}子句时会一直阻塞
                 \item Go 运行时会随机均匀地选择非阻塞的\code{case}子句执行
             \end{itemize}
     \end{itemize}
 
-\code{case}语句指明的所有通道读写操作会被同时检查是否已被满足，即
-\begin{itemize}
-    \item 读操作的可读通道非空，或通道已关闭 
-    \item 写操作的可写通道非满
-\end{itemize}
-
+    \bigskip
+    \code{case}子句指明的所有通道读写操作会被同时检查是否已被满足，即
+    \begin{itemize}
+        \item 读操作的可读通道非空，或通道已关闭 
+        \item 写操作的可写通道非满
+    \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{\texttt{case}子句的选择公平性证明}
@@ -58,6 +58,7 @@ for i := 1000; i >= 0; i-- {
     c2Count++
   }
 }
+
 fmt.Printf("c1Count: %d\nc2Count: %d\n", c1Count, c2Count)
 
 // 输出

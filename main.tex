@@ -5,6 +5,7 @@
 % https://github.com/elauksap/focus-beamertheme
 
 \usepackage{ctex}
+\usepackage{multirow}
 
 \usepackage{listings}
 \usepackage{golang}
@@ -19,7 +20,7 @@
 
 \lstset{ % add your own preferences
     frame=trBL, %single,
-    basicstyle=\ttfamily\footnotesize,
+    basicstyle=\ttfamily\scriptsize,
     keywordstyle=\color{red},
     numbers=left,
     numbersep=8pt,
@@ -32,7 +33,7 @@
 
 % command macros to save typing
 \newcommand{\channel}{\texttt{channel}}
-\newcommand{\code}[1]{\lstinline!#1!}
+\newcommand{\code}[1]{\textcolor{magenta}{\texttt{#1}}}
 \newcommand{\Cond}{\texttt{Cond}}
 \newcommand{\Mutex}{\texttt{Mutex}}
 \newcommand{\Once}{\texttt{Once}}
