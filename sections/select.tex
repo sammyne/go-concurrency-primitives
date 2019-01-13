@@ -1,0 +1,88 @@
+\section{\select 语句}
+\begin{frame}[fragile]{\select 语句}
+    \begin{itemize}
+        \item \select 语句负责绑定通道到
+            \begin{itemize}
+                \item 局部的类型或单个函数
+                \item 全局范围内多个系统组件
+            \end{itemize}
+        \item 借助\select 语句安全地利用通道实现诸如\alert{取消}、\alert{超时}(\lstlistingname~\ref{lst-select-based-timeout})、\alert{等待}和\alert{默认值}等概念
+        \item 空\select 语句(\code{select \{\}})等价于一个死循环，会永远阻塞
+    \end{itemize}
+
+\begin{lstlisting}[caption={基于\select 实现超时退出},label=lst-select-based-timeout]
+var c <-chan int
+select {
+case <-c:
+case <-time.After(1 * time.Second):
+    fmt.Println("Timed out.")
+}
+
+// 输出:
+// Timed out.
+\end{lstlisting}
+    
+\end{frame}
+
+\begin{frame}{\texttt{case}子句的选择公平性}
+    \begin{itemize}
+        \item 不同于\code{switch}语句，对于\select 语句
+            \begin{itemize}
+                \item \code{case}子句不会线性地从上往下执行
+                \item 在没有任何满足条件的\code{case}子块时会一直阻塞
+                \item Go 运行时会随机均匀地选择非阻塞的\code{case}子句执行
+            \end{itemize}
+    \end{itemize}
+
+\code{case}语句指明的所有通道读写操作会被同时检查是否已被满足，即
+\begin{itemize}
+    \item 读操作的可读通道非空，或通道已关闭 
+    \item 写操作的可写通道非满
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{case}子句的选择公平性证明}
+\begin{lstlisting}
+c1 := make(chan interface{})
+close(c1)
+c2 := make(chan interface{})
+close(c2)
+
+var c1Count, c2Count int
+for i := 1000; i >= 0; i-- {
+  select {
+  case <-c1:
+    c1Count++
+  case <-c2:
+    c2Count++
+  }
+}
+fmt.Printf("c1Count: %d\nc2Count: %d\n", c1Count, c2Count)
+
+// 输出
+// c1Count: 495
+// c2Count: 506
+\end{lstlisting}    
+\end{frame}
+
+\begin{frame}[fragile]{\texttt{default}默认子句}
+\begin{itemize}
+    \item \textbf{用途}: \code{default}子句负责执行其他\code{case}子句都不满足时的操作
+\begin{lstlisting}
+start := time.Now()
+var c1, c2 <-chan int
+
+select {
+case <-c1:
+case <-c2:
+default:
+  fmt.Println("In default after", time.Since(start))
+}
+
+// 输出:
+// In default after 1.482µs
+\end{lstlisting}
+    \item 通常\code{default}子句会与\code{for-select}循环结合使用。其中一个\href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/select/for_and_default.go}{用例}为：利用一个通道\code{done}作为终止循环的信号，而\code{default}子句负责执行终止之前的常规任务
+\end{itemize}
+\end{frame}

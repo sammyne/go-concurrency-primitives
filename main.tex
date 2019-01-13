@@ -38,10 +38,10 @@
 \newcommand{\Once}{\texttt{Once}}
 \newcommand{\Pool}{\texttt{Pool}}
 \newcommand{\RWMutex}{\texttt{RWMutex}}
+\newcommand{\select}{\texttt{select}}
 \newcommand{\WaitGroup}{\texttt{WaitGroup}}
 
 \begin{document}
-
     \begin{frame}
         \maketitle
     \end{frame}
@@ -53,22 +53,23 @@
     %\include{sections/fork-join}
 
     \section{sync包}
-\begin{frame}{基本元件}
-   \texttt{sync}包维护着用于同步底层内存访问的元件，包括
-   \begin{itemize}
-       \item \WaitGroup
-       \item \Mutex 和 \RWMutex
-       \item \Cond
-       \item \Once
-       \item \Pool
-   \end{itemize} 
-\end{frame}
+        \begin{frame}{基本元件}
+        \texttt{sync}包维护着用于同步底层内存访问的元件，包括
+        \begin{itemize}
+            \item \WaitGroup
+            \item \Mutex 和 \RWMutex
+            \item \Cond
+            \item \Once
+            \item \Pool
+        \end{itemize} 
+        \end{frame}
 
     %\include{sections/sync-pkg/wait-group}
     %\include{sections/sync-pkg/mutex}
     %\include{sections/sync-pkg/cond}
     %\include{sections/sync-pkg/once}
     %\include{sections/sync-pkg/pool}
-    \include{sections/channel}
+    %\include{sections/channel}
+    \include{sections/select}
 
 \end{document}
