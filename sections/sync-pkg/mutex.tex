@@ -1,13 +1,14 @@
 \subsection{通用锁\Mutex 和读写锁\RWMutex }
-\begin{frame}{基本介绍}
+\begin{frame}{通用锁\Mutex 和读写锁\RWMutex }
     \begin{itemize}
         \item \Mutex 是``Mutual Exclusion''的缩写
         \item \textbf{用途}: 保护程序的\alert{关键区域}---需要排他地存取共享资源的程序片段
         \item \Mutex 和\RWMutex 要求开发者必须以\alert{特定的方式}访问内存以保证数据的同步
     \end{itemize}
 
-    \href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/mutex/basic.go}{一个利用锁保证计数器安全读写的例子}
+    \mhref{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/mutex/basic.go}{一个利用锁保证计数器安全读写的例子}
 
+    \pause
     \begin{exampleblock}{温馨提示}
         \begin{itemize}
             \item 锁\code{m}的\code{Lock()}调用之后应有配对的\code{defer m.UnLock()}语句

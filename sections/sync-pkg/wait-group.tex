@@ -43,6 +43,7 @@ fmt.Println("Both are awaken.")
         \item \code{Wait()}使其一直阻塞直至计数器置零
     \end{itemize}
 
+    \pause
     \begin{alertblock}{温馨提示}
         \code{Add()}需要在\WaitGroup 协调的协程之外(一般使主协程)调用，否则将引入\alert{竞态}
     \end{alertblock}
