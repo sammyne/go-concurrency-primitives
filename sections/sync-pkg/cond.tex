@@ -40,7 +40,7 @@ c.L.Unlock()
     \item \code{Wait()}内部执行过程会先调用所绑定锁的\code{Unlock()}，而在收到需要的信号后、退出执行前再次执行\code{Lock()}重新获得对锁的控制权
 \end{itemize}
 
-另一个例子是\href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/cond/queue.go}{玩具级的限定容量队列}
+另一个例子是\mhref{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/cond/queue.go}{玩具级的限定容量队列}
 \end{frame}
 
 \begin{frame}{两种通知方式: \code{Signal}和\code{Broadcast}}
