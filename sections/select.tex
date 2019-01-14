@@ -3,13 +3,10 @@
     \begin{itemize}
         \item \select 语句负责绑定通道到
             \begin{itemize}
-                \item 局部的类型或单个函数
+                \item 局部的对象类型或单个函数
                 \item 全局范围内多个系统组件
             \end{itemize}
         \item 借助\select 语句安全地利用通道实现诸如\alert{取消}、\alert{超时}(\lstlistingname~\ref{lst-select-based-timeout})、\alert{等待}和\alert{默认值}等概念
-        \item 空\select 语句(\code{select \{\}})等价于一个死循环，会永远阻塞
-    \end{itemize}
-
 \begin{lstlisting}[caption={基于\select 实现超时退出},label=lst-select-based-timeout]
 var c <-chan int
 select {
@@ -21,6 +18,9 @@ case <-time.After(1 * time.Second):
 // 输出:
 // Timed out.
 \end{lstlisting}
+        \item<2-> \textcolor{example}{空\select 语句(\code{select \{\}})等价于一个死循环，会永远阻塞}
+    \end{itemize}
+
     
 \end{frame}
 
@@ -35,7 +35,7 @@ case <-time.After(1 * time.Second):
     \end{itemize}
 
     \bigskip
-    \code{case}子句指明的所有通道读写操作会被同时检查是否已被满足，即
+    \code{case}子句指明的所有通道读写操作会被同时检查是否已满足，即
     \begin{itemize}
         \item 读操作的可读通道非空，或通道已关闭 
         \item 写操作的可写通道非满
@@ -84,6 +84,6 @@ default:
 // 输出:
 // In default after 1.482µs
 \end{lstlisting}
-    \item 通常\code{default}子句会与\code{for-select}循环结合使用。其中一个\href{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/select/for_and_default.go}{用例}为：利用一个通道\code{done}作为终止循环的信号，而\code{default}子句负责执行终止之前的常规任务
+    \item 通常\code{default}子句会与\code{for-select}循环结合使用。其中一个\mhref{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/select/for_and_default.go}{用例}为：利用一个通道\code{done}作为终止循环的信号，而\code{default}子句负责执行终止之前的常规任务
 \end{itemize}
 \end{frame}
