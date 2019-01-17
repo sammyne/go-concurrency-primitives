@@ -35,7 +35,7 @@ fmt.Println("Both are awaken.")
 \end{frame}
 
 \begin{frame}{\WaitGroup}
-    \WaitGroup 可看作一个线程安全的计数器
+    \WaitGroup 可看作一个\alert{协程安全}的计数器
 
     \begin{itemize}
         \item 通过 \code{Add(x)}加上特定数\code{x}
@@ -45,6 +45,6 @@ fmt.Println("Both are awaken.")
 
     \pause
     \begin{alertblock}{温馨提示}
-        \code{Add()}需要在\WaitGroup 协调的协程之外(一般使主协程)调用，否则将引入\alert{竞态}
+        \code{Add()}需要在\WaitGroup 协调的协程之外(一般是主协程)调用，否则将引入\alert{竞态}
     \end{alertblock}
 \end{frame}

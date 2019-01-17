@@ -1,7 +1,7 @@
 \section{通道\channel }
 \begin{frame}{用途和种类}
     \begin{itemize}
-        \item \textbf{用途}: 以线程安全的方式实现不同协程之间的通信 
+        \item \textbf{用途}: 以协程安全的方式实现不同协程之间的通信 
         \item 通道在声明时指定其数据流向
             \begin{itemize}
                 \item \alert{读写}\quad 默认，例如，\code{xStream := make(chan int)}
@@ -12,7 +12,7 @@
 
     \pause
     \begin{exampleblock}{温馨提示}
-        go 会在必要时隐式地将单向通道(只读/只写)转为双向通道(读写) 
+        go 会在必要时隐式地将双向(读写)通道转为单向(只读/只写)通道 
     \end{exampleblock}
 \end{frame}
 
@@ -43,7 +43,7 @@ readStream <- struct{}{}
 
 // 输出:
 // invalid operation: readStream <- struct {} literal 
-// (send // to receive-only type <-chan interface {})    
+// (send to receive-only type <-chan interface {})    
 \end{lstlisting}
         \item\pause 对\alert{只写通道}的读操作
 \begin{lstlisting}
@@ -104,7 +104,7 @@ intStream := make(chan int)
 go func() {
     defer close(intStream)
     for i := 1; i <= 5; i++ {
-    intStream <- i
+        intStream <- i
     }
 }()
 
@@ -151,7 +151,7 @@ wg.Wait()
         \item 缓存型: 通道在初始化时被赋予大于 0 的容量
             \begin{itemize}
                 \item 给定容量为\code{n}，对通道\code{c}可同时支持\code{n}个写操作
-                \item 可作为一个内存型消息队列实现并发进程间的通信
+                \item 可作为一个内存型消息队列实现并发协程间的通信
                 \item 通道为空且有挂起的等待协程时，新值的传入会绕过通道直接传给等待协程
                 \item 这类通道容易\alert{导致过早优化问题}和\alert{隐藏死锁问题}
             \end{itemize}
@@ -165,11 +165,11 @@ wg.Wait()
 \begin{frame}[fragile]{\code{nil}通道}
     给定\code{nil}通道\code{c}
     \begin{itemize}
-        \item 对\code{c}的读操作会阻塞进程(尽管并不一定会导致死锁??)
+        \item 对\code{c}的读操作会阻塞协程(尽管并不一定会导致死锁??)
 \begin{lstlisting}
     fatal error: all goroutines are asleep - deadlock!
 \end{lstlisting}
-        \item 对\code{c}的写操作也会阻塞进程
+        \item 对\code{c}的写操作也会阻塞协程
 \begin{lstlisting}
 fatal error: all goroutines are asleep - deadlock!
 \end{lstlisting}

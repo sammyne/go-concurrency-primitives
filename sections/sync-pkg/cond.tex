@@ -1,13 +1,13 @@
 \subsection{条件信号量\Cond}
 \begin{frame}{条件信号量\Cond}
     \begin{itemize}
-        \item \textbf{用途}: 协程用于等待或通知特定事件发生的消息中心
+        \item \textbf{用途}: 协程用于等待或通知特定事件发生的\alert{消息中心}
         \item 这里的事件只在两个或更多协程之间传递事件发生的事实本身，\alert{无法承载其他信息}
     \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{使用场景}
-   没有借助条件信号量实现事件通知的两种方式
+   不借助条件信号量实现事件通知的两种方式
    
    \begin{enumerate}
        \item \code{for}循环等到为止: 无限占用 CPU 内核，\alert{无法被调度}
@@ -37,7 +37,7 @@ c.L.Unlock()
 
 \begin{itemize}
     \item \code{Wait()}促使协程进入阻塞状态，挂起当前协程，为其他协程腾出在系统级线程执行的机会
-    \item \code{Wait()}内部执行过程会先调用所绑定锁的\code{Unlock()}，而在收到需要的信号后、退出执行前再次执行\code{Lock()}重新获得对锁的控制权
+    \item \code{Wait()}内部执行过程会先调用所绑定锁的\code{Unlock()}，而在收到需要的信号后、退出执行前再次执行\code{Lock()}重新获得锁的控制权
 \end{itemize}
 
 另一个例子是\mhref{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/cond/queue.go}{玩具级的限定容量队列}

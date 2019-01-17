@@ -24,6 +24,7 @@ go sayHello()
 // continue doing other things
 \end{lstlisting}
 
+  \pause
   \alert{以上程序的输出结果是不确定的}。因为协程由 Go 运行时创建和调度，\code{sayHello}协程没能通过合适的汇合点和主协程进行汇合。因此，如果被调度之前主协程已退出，\code{sayHello}就无法获得执行的机会
 
   \pause
@@ -33,14 +34,15 @@ go sayHello()
 \end{frame}
 
 \begin{frame}[fragile]{纠正的汇合点}
-为上述程序设置正确的汇合点，\texttt{sayHello}必须和主协程\textbf{同步}，使自己能在主协程退出之前与其汇合，解决方案之一如\lstlistingname~\ref{lst-ok-join}
+为上述程序设置正确的汇合点，\code{sayHello}必须和主协程\textbf{同步}，使自己能在主协程退出之前与其汇合，解决方案之一如\lstlistingname~\ref{lst-ok-join}
 
-\begin{lstlisting}[caption={利用同步确保\texttt{sayHello}在主协程退出之前与其汇合},label=lst-ok-join]
+\begin{lstlisting}[caption={利用同步确保\code{sayHello}在主协程退出之前与其汇合},label=lst-ok-join]
 var wg sync. WaitGroup
 sayHello := func() {
   defer wg.Done()
   fmt.Println("hello")
 }
+
 wg.Add(1)
 go sayHello()
 wg.Wait()  // 汇合点
@@ -55,7 +57,7 @@ wg.Wait()  // 汇合点
 \begin{frame}{数据同步方式}
 \texttt{go}语言实现数据同步操作提供了两种方式
 \begin{itemize}
-    \item 传统地，\alert{共享内存型同步模式}，常用元件分布在\texttt{sync}包
+    \item 传统地，\alert{共享内存型同步模式}，常用元件分布在\code{sync}包
     \item \alert{基于顺序进程通信(CSP)}的消息传递实现数据同步，主要元件为通道\channel 及\select 语句
 \end{itemize}
 \end{frame}

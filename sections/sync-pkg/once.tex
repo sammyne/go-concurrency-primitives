@@ -58,17 +58,17 @@ fmt.Println("Count is", count)
 \begin{frame}[fragile]{注意事项}
   \begin{itemize}
       \item \alert{\Once 确保的目标操作是通过自己的\texttt{Do()}函数注册的\alert{第一个}回调函数}
-      \item\pause \Once 内部使用锁，在回调函数调用前请求锁，而在调用返回前释放锁，需要留意不同回调函数之间的依赖性，避免死锁
+      \item\pause \Once 内部使用锁，在回调函数调用前请求锁，而在调用返回前释放锁，需要\alert{留意不同回调函数之间的依赖性，避免死锁}
   \end{itemize}  
 
 \begin{lstlisting}[caption={\Once 的使用不当导致死锁}]
 var onceA, onceB sync.Once
 var initB func()
 
-initA := func() { onceB. Do(initB) }
-initB = func() { onceA. Do(initA) }
+initA := func() { onceB.Do(initB) }
+initB = func() { onceA.Do(initA) }
 
-onceA. Do(initA)    
+onceA.Do(initA)    
 
 // 输出:
 // fatal error: all goroutines are asleep - deadlock!
