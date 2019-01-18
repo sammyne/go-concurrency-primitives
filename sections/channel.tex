@@ -93,6 +93,11 @@ fmt.Printf("(%v): %v", ok, salutation)
     \begin{itemize}
         \item \code{close(c)}函数调用可关闭通道\code{c}
         \item 可读通道能够满足无限的读请求(即使通道已被关闭)
+        \item 基于通道关闭实现的设计模式
+            \begin{itemize}
+                \item \code{for...range}遍历
+                \item 作为通知信号
+            \end{itemize}
     \end{itemize}
 \end{frame}
 
