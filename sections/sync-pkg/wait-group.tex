@@ -38,13 +38,13 @@ fmt.Println("Both are awaken.")
     \WaitGroup 可看作一个\alert{协程安全}的计数器
 
     \begin{itemize}
-        \item 通过 \code{Add(x)}加上特定数\code{x}
+        \item 通过 \code{Add(x)}加上特定整数\code{x}
         \item 通过 \code{Done()}使其减1
         \item \code{Wait()}使其一直阻塞直至计数器置零
     \end{itemize}
 
     \pause
     \begin{alertblock}{温馨提示}
-        \code{Add()}需要在\WaitGroup 协调的协程之外(一般是主协程)调用，否则将引入\alert{竞态}
+        \code{Add()}需要在\WaitGroup 等待的协程之外(一般是主协程)调用，否则将引入\alert{竞态}
     \end{alertblock}
 \end{frame}

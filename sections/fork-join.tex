@@ -4,7 +4,7 @@
       \column{.5\textwidth}
         \begin{itemize}
           \item 程序执行过程中，\alert{父线程}可以分叉出与其并发执行的\alert{子线程}
-          \item \alert{汇合点}: 子线程从独立执行到汇合回父线程的时间点
+          \item \alert{汇合点}: 子线程因完成独立执行而汇合回父线程的时间点
         \end{itemize}
 
       \column{.5\textwidth}
@@ -20,6 +20,7 @@
 sayHello := func() {
   fmt.Println("hello")
 }
+
 go sayHello()
 // continue doing other things
 \end{lstlisting}
@@ -37,7 +38,7 @@ go sayHello()
 为上述程序设置正确的汇合点，\code{sayHello}必须和主协程\textbf{同步}，使自己能在主协程退出之前与其汇合，解决方案之一如\lstlistingname~\ref{lst-ok-join}
 
 \begin{lstlisting}[caption={利用同步确保\code{sayHello}在主协程退出之前与其汇合},label=lst-ok-join]
-var wg sync. WaitGroup
+var wg sync.WaitGroup
 sayHello := func() {
   defer wg.Done()
   fmt.Println("hello")

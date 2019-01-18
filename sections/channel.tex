@@ -16,7 +16,7 @@
     \end{exampleblock}
 \end{frame}
 
-\begin{frame}[fragile]{数据类型与传递}
+\begin{frame}[fragile]{数据的类型与传递}
     \begin{itemize}
         \item 通道传递的数据类型可以被指定
         \item 对于一个可读通道\code{c}，可以利用表达式\code{c <- x}将值\code{x}放到通道里
@@ -64,7 +64,7 @@ writeStream := make(chan<- interface{})
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{读操作的两种方式}
+\begin{frame}[fragile]{读操作的两种返回值形式}
     \begin{itemize}
         \item 只返回一个值: 从通道传输下来的数值
         \item\pause 返回一个值\code{x}和一个布尔值\code{closed}
@@ -117,7 +117,7 @@ for integer := range intStream {
 \end{lstlisting}    
 \end{frame}
 
-\begin{frame}[fragile]{设计模式2: 作为取消信号}
+\begin{frame}[fragile]{设计模式2: 作为通知信号}
     以通道的关闭为信号通知多个协程退出当前任务的执行
 \begin{lstlisting}
 begin := make(chan interface{})
@@ -150,9 +150,9 @@ wg.Wait()
         \item 非缓存型: 声明时不指定容量或指定容量为 0
         \item 缓存型: 通道在初始化时被赋予大于 0 的容量
             \begin{itemize}
-                \item 给定容量为\code{n}，对通道\code{c}可同时支持\code{n}个写操作
+                \item 给定容量为\code{n}，通道\code{c}可同时支持\code{n}个写操作
                 \item 可作为一个内存型消息队列实现并发协程间的通信
-                \item 通道为空且有挂起的等待协程时，新值的传入会绕过通道直接传给等待协程
+                \item 通道为空且有挂起的等待协程时，新值的传入会绕过通道直接传给等待协程(非缓存型呢??)
                 \item 这类通道容易\alert{导致过早优化问题}和\alert{隐藏死锁问题}
             \end{itemize}
     \end{itemize}
@@ -205,8 +205,8 @@ fatal error: all goroutines are asleep - deadlock!
             \hline
             \multirow{5}{*}{关闭} 
               &\cellcolor{red}\texttt{nil} &\cellcolor{red} 恐慌 \\
-              &未关闭且非空 & 关闭通道；读操作能不断满足直至通道清空，之后返回默认值 \\
-              &未关闭且空 & 关闭通道；读操作获取默认值 \\
+              &未关闭且非空 & 关闭通道；后续读操作能不断满足直至通道清空，之后返回默认值 \\
+              &未关闭且空 & 关闭通道；后续读操作获取默认值 \\
               &\cellcolor{red}已关闭 &\cellcolor{red} 恐慌 \\
               &\cellcolor{yellow}只读 &\cellcolor{yellow} 编译错误 \\
             \hline
@@ -244,7 +244,7 @@ chanOwner := func() <-chan int {
     go func() {
         defer close(resultStream)
         for i := 0; i < 3; i++ {
-        resultStream <- i
+            resultStream <- i
         }
     }()
     return resultStream

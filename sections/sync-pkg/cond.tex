@@ -17,7 +17,7 @@ for conditionTrue() == false { }
        \item 利用主动睡眠提供可被抢占机会: \alert{效率不高，且难以准确设置睡眠的时长}：太长降低性能，太短消耗太多 CPU 时间    
 \begin{lstlisting}
 for conditionTrue() == false {
-  time. Sleep(1*time.Millisecond)
+  time.Sleep(1*time.Millisecond)
 }
 \end{lstlisting}
    \end{enumerate}
@@ -37,7 +37,7 @@ c.L.Unlock()
 
 \begin{itemize}
     \item \code{Wait()}促使协程进入阻塞状态，挂起当前协程，为其他协程腾出在系统级线程执行的机会
-    \item \code{Wait()}内部执行过程会先调用所绑定锁的\code{Unlock()}，而在收到需要的信号后、退出执行前再次执行\code{Lock()}重新获得锁的控制权
+    \item \alert{基本原理}: \code{Wait()}内部执行过程会先调用所绑定锁的\code{Unlock()}，而在收到需要的信号后、退出执行前再次执行\code{Lock()}重新获得锁的控制权
 \end{itemize}
 
 另一个例子是\mhref{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/cond/queue.go}{玩具级的限定容量队列}

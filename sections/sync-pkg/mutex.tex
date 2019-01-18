@@ -3,7 +3,8 @@
     \begin{itemize}
         \item \Mutex 是``Mutual Exclusion''的缩写
         \item \textbf{用途}: 保护程序的\alert{关键区域}---需要排他地存取共享资源的程序片段
-        \item \Mutex 和\RWMutex 要求开发者必须以\alert{特定的方式}访问内存以保证数据的同步
+        \item 原理: 每个使用者都必须获得锁取得进入关键区块的权利，而在退出关键区域后释放锁，\alert{任何时候只有某个使用者能持有锁}
+        \item \Mutex 和\RWMutex 要求开发者必须以\alert{约定的方式}访问内存以保证数据的同步
     \end{itemize}
 
     \mhref{https://github.com/sammyne/concurrency-in-go/blob/master/chapter03/sync.pkg/mutex/basic.go}{一个利用锁保证计数器安全读写的例子}
@@ -11,7 +12,7 @@
     \pause
     \begin{exampleblock}{温馨提示}
         \begin{itemize}
-            \item 锁\code{m}的\code{Lock()}调用之后应有配对的\code{defer m.UnLock()}语句
+            \item 锁\code{m}的\code{Lock()}调用之后应有配对的\code{defer m.UnLock()}语句以释放对锁的控制权
             \item \alert{进出关键区域的代价是昂贵的}
         \end{itemize}    
     \end{exampleblock}
